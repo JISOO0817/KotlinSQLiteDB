@@ -1,5 +1,6 @@
 package com.example.kotlinsqlitedb.Activity
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.kotlinsqlitedb.DB.OpenHelper
 import com.example.kotlinsqlitedb.R
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_add_update_record.*
 
 class AddUpdateRecordActivity : AppCompatActivity() {
@@ -90,6 +93,9 @@ class AddUpdateRecordActivity : AppCompatActivity() {
             ""+imageUri,
             ""+timestamp,
             ""+timestamp)
+
+        startActivity(Intent(this,MainActivity::class.java))
+
 
 
     }
@@ -202,7 +208,36 @@ class AddUpdateRecordActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if(resultCode == RESULT_OK){
+            if(requestCode == IMAGE_PICK_GALLERY_CODE){
+                CropImage.activity(data!!.data)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this)
+            }
+            else if(requestCode == IMAGE_PICK_CAMERA_CODE){
+                CropImage.activity(data!!.data)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this)
+            }
+            else if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+                val result = CropImage.getActivityResult(data)
+                if(resultCode == Activity.RESULT_OK){
+                    val resultUri = result.uri
+                    imageUri = resultUri
+                    photoIv.setImageURI(resultUri)
+                }else if(resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+                    val error = result.error
+                }
+
+            }
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
+
+
 
 }
