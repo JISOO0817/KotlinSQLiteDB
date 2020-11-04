@@ -23,7 +23,7 @@ class OpenHelper(context: Context?):SQLiteOpenHelper(
         onCreate(db)
     }
 
-    //insert data
+    //insert
 
     fun insertData(
         name: String?,
@@ -48,6 +48,8 @@ class OpenHelper(context: Context?):SQLiteOpenHelper(
         return id
 
     }
+
+    //get all data
 
     fun getAllData(orderBy: String):ArrayList<ModelData>{
 
@@ -74,8 +76,46 @@ class OpenHelper(context: Context?):SQLiteOpenHelper(
         db.close()
         return dataList
 
+    }
+
+    //update
+
+    fun updateData(id:String,
+                   name:String?,
+                   image:String?,
+                   price:String?,
+                   description:String?,
+                   addTimeStamp:String?,
+                   updateTimeStamp:String?):Long
+
+    {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(Constants.C_NAME,name)
+        values.put(Constants.C_IMAGE,image)
+        values.put(Constants.C_PRICE,price)
+        values.put(Constants.C_DESCRIPTION,description)
+        values.put(Constants.C_ADD_STAMP,addTimeStamp)
+        values.put(Constants.C_UPDATE_STAMP,updateTimeStamp)
+
+        return db.update(Constants.TABLE_NAME,values, "${Constants.C_ID}=?", arrayOf(id)).toLong()
 
     }
+
+
+    fun deleteData(id:String){
+        val db = this.writableDatabase
+        db.delete(Constants.TABLE_NAME, "${Constants.C_ID}=?", arrayOf(id)).toLong()
+        db.close()
+    }
+
+    fun deleteAll(){
+        val db = this.writableDatabase
+        db.execSQL("DELETE FROM ${Constants.TABLE_NAME}")
+        db.close()
+    }
+
+
 
 
 }
